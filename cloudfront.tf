@@ -1,3 +1,6 @@
+# Nothing meaningful here yet, so commenting the whole file.
+
+/**
 resource "aws_cloudfront_origin_access_control" "s3_website_oac" {
   name                              = "${var.proj_name}-s3-website-origin-access-control"
   origin_access_control_origin_type = "s3"
@@ -44,3 +47,4 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
 }
+**/

@@ -1,0 +1,45 @@
+name: CLOUDFRONT & WAF DEPLOYMENT
+
+on:
+  workflow_dispatch:
+    inputs:
+      deployment:
+        type: choice
+        description: DeployOrTearDown
+        options:
+          - Apply
+          - Destroy
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 1
+    
+        - uses: hashicorp/setup-terraform@v2
+
+        - name: init
+          run: terraform init
+
+        - name: validate
+          run: terraform validate
+
+        - name: plan
+          run: terraform plan
+
+        - name: apply or destroy
+          run: |
+            if [ ${{ github.event.inputs.deployment }} == 'Apply' ]; then  
+              terraform apply -var 'api_gateway_arn=${{ vars.API_GATEWAY_UPLOAD_IMAGES_ARN }}' -auto-approve
+            elif [ ${{ github.event.inputs.deployment }} == 'Destroy' ]; then  
+              terraform destroy -auto-approve
+            fi
+          shell: bash
